@@ -3,7 +3,9 @@ using OpenTibia.Client.Things;
 using OpenTibia.Core;
 using OpenTibia.Utils;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace ClientConverter
@@ -53,6 +55,15 @@ namespace ClientConverter
 
         #region | Event Handlers |
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo version = FileVersionInfo.GetVersionInfo(assembly.Location);
+            this.Text = "ClientConverter " + version.FileVersion;
+        }
+
         private void InputVersionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             OpenTibia.Core.Version version = (OpenTibia.Core.Version)this.inputVersionComboBox.SelectedItem;
@@ -71,10 +82,16 @@ namespace ClientConverter
 
         private void LoadButton_Click(object sender, EventArgs e)
         {
-            string directory = Path.Combine(PathUtils.ApplicationDirectory, "Client");
+            string directory = Path.Combine(PathUtils.ApplicationDirectory, "Input");
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
+            }
+
+            if (this.client != null)
+            {
+                this.client.Dispose();
+                this.client = null;
             }
 
             OpenTibia.Core.Version version = (OpenTibia.Core.Version)this.inputVersionComboBox.SelectedItem;
@@ -113,6 +130,7 @@ namespace ClientConverter
 
             try
             {
+                this.compileButton.Enabled = false;
                 this.client.Save(datPath, sprPath, version, features);
             }
             catch (Exception ex)
@@ -136,7 +154,9 @@ namespace ClientConverter
 
         private void ClientCompiled_Handler(object sender, EventArgs e)
         {
-            
+            this.loadButton.Enabled = this.client.Loaded;
+            this.compileButton.Enabled = this.client.Loaded;
+            this.compileProgressBar.Value = 100;
         }
 
         #endregion
