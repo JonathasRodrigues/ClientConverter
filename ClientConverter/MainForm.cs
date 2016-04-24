@@ -124,7 +124,7 @@ namespace ClientConverter
             OpenTibia.Core.Version version = (OpenTibia.Core.Version)this.outputVersionComboBox.SelectedItem;
             string datPath = Path.Combine(directory, "Tibia.dat");
             string sprPath = Path.Combine(directory, "Tibia.spr");
-            ClientFeatures features = (ClientFeatures)(ClientFeatures.PatternZ | ClientFeatures.Extended);
+            ClientFeatures features = ClientFeatures.PatternZ | ClientFeatures.Extended;
             features |= this.outputFrameDurationsCheckBox.Checked ? ClientFeatures.FrameDurations : features;
             features |= this.outputFrameGroupsCheckBox.Checked ? ClientFeatures.FrameGroups : features;
 
